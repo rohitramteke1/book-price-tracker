@@ -1,0 +1,41 @@
+name: Daily Price Scraper
+
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Chromium and ChromeDriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          sudo ln -s /usr/bin/chromium-browser /usr/bin/chrome || true
+
+      - name: Run tests
+        run: pytest test_scrape.py
+
+      - name: Run scraper
+        run: python scrape.py
+
+      - name: Upload price log artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: price_log
+          path: data/price_log.csv 
