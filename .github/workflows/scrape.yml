@@ -35,7 +35,7 @@ jobs:
         run: python scrape.py
 
       - name: Upload price log artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: price_log
           path: data/price_log.csv 
